@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose";
 import { userZodSchema } from "../schema/user.js";
 
 const userSchema=new Schema({
-    name:{
+    fullName:{
         type: String,
         required: true
     },
@@ -19,7 +19,11 @@ const userSchema=new Schema({
         required: true,
         enum: ["user", "admin"]
     },
-})
+    isActive:{
+        type: Boolean,
+        default: true,
+    }
+},{timestamps: true})
 
 userSchema.pre("validate", function(next){
     try{

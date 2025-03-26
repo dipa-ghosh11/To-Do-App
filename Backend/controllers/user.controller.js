@@ -1,12 +1,12 @@
 import { User } from "../models/user.model.js";
 import bcrypt from "bcryptjs"
 import { generateToken } from "../utils/token.js";
-import cookieParser from "cookie-parser";
+import mongoose from "mongoose";
 
 export const createUser=async(req, res)=>{
-    const {name, email, password , role}=req.body;
+    const {fullName, email, password , role}=req.body;
 
-    if(!name || !email|| !password || !role){
+    if(!fullName || !email|| !password || !role){
         return res.status(400).json({success: false, message: "All fields are required"});
     }
 
@@ -17,7 +17,7 @@ export const createUser=async(req, res)=>{
 
     try {
         const hashedPassword=await bcrypt.hash(password, 10);
-        const user =await User.create({ name, email, password: hashedPassword, role });
+        const user =await User.create({ fullName, email, password: hashedPassword, role });
         //generate token
         const token=generateToken(user);
         
@@ -77,5 +77,71 @@ export const loginUser= async (req, res)=>{
 
     catch (error) {
         res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+
+export const logoutUser=async (req, res)=>{
+    if(req.cookies.adminToken)
+    {
+        res.cookie("adminToken", "",{
+            httpOnly: true,
+            expires: new Date(Date.now())
+        })
+
+        res.status(200).json({
+            success: true,
+            message: "Admin Logged Out Successfully.",
+        })
+    }
+
+    else{
+        res.cookie("userToken", "", {
+            httpOnly: true,
+            expires: new Date(Date.now())
+        })
+
+        res.status(200).json({
+            success: true,
+            message: "User Logged Out Successfully.",
+        })
+    }
+}
+
+
+export const getAllUsers=async(req, res)=>{
+    try{
+        const users=await User.find({role: "user"});
+
+        if(!users){
+            return res.status(400).json({success: false, message: "No users found"});
+        }
+
+        res.status(200).json({success: true, message: "Users fetched successfully", users});
+    }
+
+    catch(error){
+        res.status(500).json({success: false, message: "Internal server error"})
+    }
+}
+
+
+export const getUser=async(req, res)=>{
+    try{
+        const user = await User.findById(req.params.id).select("-password");
+
+        if (!mongoose.isValidObjectId(req.params.id)) {
+            return res.status(400).json({ success: false, message: "Invalid User ID" });
+        }
+
+        if(!user){
+            return res.status(404).json({ success: false, message: "User not found" })
+        }
+
+        res.status(200).json({ success: true, message: "User fetched successfully", user });
+    }
+
+    catch (error) {
+        res.status(500).json({ success: false, message: "Internal server error" , error:error.message})
     }
 }
