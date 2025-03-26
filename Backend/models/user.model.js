@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { userZodSchema } from "../schema/user";
+import { userZodSchema } from "../schema/user.js";
 
 const userSchema=new Schema({
     name:{
@@ -19,10 +19,6 @@ const userSchema=new Schema({
         required: true,
         enum: ["user", "admin"]
     },
-    projects:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Project'
-    }
 })
 
 userSchema.pre("validate", function(next){
@@ -34,5 +30,10 @@ userSchema.pre("validate", function(next){
         next(new Error(error.errors.map(e=>e.message).join(",")))
     }
 })
+
+userSchema.methods.validatePassword=async function (password) {
+    const user=this;
+    return await bcrypt.compare(password, user.password);
+};
 
 export const User=mongoose.model("User", userSchema);
