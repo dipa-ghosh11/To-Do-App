@@ -1,5 +1,5 @@
 import express from "express"
-import { createUser, getAllUsers, getUser, loginUser, logoutUser } from "../controllers/user.controller.js";
+import { createUser, deleteUser, getAllUsers, getUser, loginUser, logoutUser } from "../controllers/user.controller.js";
 import { verifyAuth } from "../middlewares/auth.middleware.js";
 
 const router=express.Router();
@@ -9,6 +9,7 @@ router.post('/login', loginUser)
 router.post('/logout', verifyAuth, logoutUser)
 router.get('/getusers', getAllUsers)
 router.get('/getuser/:id', getUser)
+router.delete('/delete/:id', deleteUser);
 
 
 

@@ -25,13 +25,14 @@ export const createUser=async(req, res)=>{
         const data =await User.findById(user._id).select("-password");
         res.cookie("token", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
+            secure: true,
+           
         });
 
 
         return res.status(201).json({ success: true, message: "User registered successfully", data, token})
     } catch (error) {
+        console.log(error)
         return res.status(500).json({ success: false, message: "Error creating user", error:error.message });
     }
 
@@ -68,8 +69,8 @@ export const loginUser= async (req, res)=>{
         const token = generateToken(user);
         res.cookie(cookieName, token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
+            secure: true,
+           
         });
 
         res.status(200).json({success: true, message: "User logged in", data, token});
@@ -144,4 +145,21 @@ export const getUser=async(req, res)=>{
     catch (error) {
         res.status(500).json({ success: false, message: "Internal server error" , error:error.message})
     }
+}
+
+
+export const deleteUser = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const deletedUser = await User.findByIdAndDelete(userId);
+        if (!deletedUser) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+        return res.status(200).json({ success: true, message: "User deleted successfully" });
+    }
+
+    catch (error) {
+        return res.status(500).json({ success: false, message: "Internal server error" , error:error.message});
+    }
+
 }
