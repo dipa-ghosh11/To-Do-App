@@ -46,7 +46,7 @@ export const createProject= async(req, res)=>{
 
 export const getAllProject= async(req, res)=>{
     try {
-        const projects = await USER.find();
+        const projects = await Project.find();
 
         if (!projects || projects.length === 0) {
             return res.status(404).json({
@@ -61,6 +61,26 @@ export const getAllProject= async(req, res)=>{
             projects
         })
     } catch (error) {
+        res.status(500).json({ success: false, message: "Internal server error", error: error.message })
+    }
+}
+
+
+export const getProjectByid= async(req, res)=>{
+    try {
+        const project= await Project.findById(req.params.id);
+
+        if (!mongoose.isValidObjectId(req.params.id)) {
+            return res.status(400).json({ success: false, message: "Invalid project ID" });
+        }
+        
+        if(!project){
+            return res.status(404).json({ success: false, message: "Project not found" })
+        }
+        
+        res.status(200).json({ success: true, message: "Project fetched successfully", project });
+    } catch (error) {
+        console.log(error)
         res.status(500).json({ success: false, message: "Internal server error", error: error.message })
     }
 }
