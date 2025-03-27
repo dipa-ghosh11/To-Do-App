@@ -1,4 +1,5 @@
 import {z} from "zod";
+import mongoose from "mongoose";
 
 export const projectZodSchema = z.object({
     projectTitle: z.string({ required_error: "Project title is required" })
@@ -12,11 +13,7 @@ export const projectZodSchema = z.object({
 
     startDate: z.coerce.date({ required_error: "Start date is required" }),
 
-    endDate: z.coerce.date({ required_error: "End date is required" })
-        .refine((endDate, ctx) => {
-            const { startDate } = ctx.parent;
-            return endDate >= startDate;
-        }, { message: "End date cannot be before the start date" }),
+    endDate: z.coerce.date({ required_error: "End date is required" }),
 
     isDelete: z.boolean().default(false),
 
@@ -24,3 +21,5 @@ export const projectZodSchema = z.object({
 
     createdBy: z.string().refine((id) => mongoose.Types.ObjectId.isValid(id), { message: 'Invalid ObjectId' }),
 });
+
+

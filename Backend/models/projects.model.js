@@ -25,16 +25,20 @@ projectSchema.pre("validate", function(next){
     try{
         // projectZodSchema.parse(this.toObject())
         const validatedData = projectZodSchema.parse({
-            ...this.toObject(), createdBy: this.createdBy.toString(), assignedUsers: this.assignedUsers.map(u => {
-                u._id.toString();
-            })
+            ...this.toObject(),
+            createdBy: this.createdBy.toString(),
+            assignedUsers: this.assignedUsers.map(u => u?._id.toString()) // Fix here
         });
-
         Object.assign(this, validatedData);
         next();
     }
     catch(error){
+        console.log(error)
         next(new Error(error.errors.map(e=>e.message).join(",")))
     }
 })
 export const Project=mongoose.model("Project", projectSchema);
+
+
+
+
