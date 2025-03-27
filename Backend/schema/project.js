@@ -20,7 +20,7 @@ export const projectZodSchema = z.object({
 
     isDelete: z.boolean().default(false),
 
-    assignedUsers: z.array(z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid User ID")),
+    assignedUsers: z.array(z.string().refine((id) => mongoose.Types.ObjectId.isValid(id), { message: 'Invalid ObjectId' })),
 
-    createdBy: z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid Creator ID"),
+    createdBy: z.string().refine((id) => mongoose.Types.ObjectId.isValid(id), { message: 'Invalid ObjectId' }),
 });

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { projectZodSchema } from "../schema/project";
+import { projectZodSchema } from "../schema/project.js";
 
 const projectSchema=new mongoose.Schema({
     projectTitle: {type:String, required:true},
@@ -7,12 +7,12 @@ const projectSchema=new mongoose.Schema({
     projectStatus: {type: String, default: "Pending", required: true},
     startDate: {type: Date, required: true},
     endDate:{type: Date, required: true},
-    isDelete:{type: boolean, required: true},
-    assignedUsers:{
+    isDelete:{type: Boolean, required: true},
+    assignedUsers:[{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
-    },
+    }],
     createdBy:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
@@ -23,7 +23,14 @@ const projectSchema=new mongoose.Schema({
 
 projectSchema.pre("validate", function(next){
     try{
-        projectZodSchema.parse(this.toObject())
+        // projectZodSchema.parse(this.toObject())
+        const validatedData = projectZodSchema.parse({
+            ...this.toObject(), createdBy: this.createdBy.toString(), assignedUsers: this.assignedUsers.map(u => {
+                u._id.toString();
+            })
+        });
+
+        Object.assign(this, validatedData);
         next();
     }
     catch(error){

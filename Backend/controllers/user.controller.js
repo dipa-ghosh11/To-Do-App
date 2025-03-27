@@ -4,7 +4,7 @@ import { generateToken } from "../utils/token.js";
 import mongoose from "mongoose";
 
 export const createUser=async(req, res)=>{
-    const {fullName, email, password , role}=req.body;
+    const {fullName, email, password , role, isActive}=req.body;
 
     if(!fullName || !email|| !password || !role){
         return res.status(400).json({success: false, message: "All fields are required"});
@@ -17,7 +17,7 @@ export const createUser=async(req, res)=>{
 
     try {
         const hashedPassword=await bcrypt.hash(password, 10);
-        const user =await User.create({ fullName, email, password: hashedPassword, role });
+        const user =await User.create({ fullName, email, password: hashedPassword, role, isActive });
         //generate token
         const token=generateToken(user);
         

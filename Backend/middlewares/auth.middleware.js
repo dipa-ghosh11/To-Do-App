@@ -22,7 +22,7 @@ export const verifyAuth= async(req, res, next)=>{
     }
 }
 
-export const verifyAdmin=async(res, req, next)=>{
+export const verifyAdmin=async(req, res, next)=>{
     try {
         const token=req.cookies?.adminToken;
 
@@ -37,10 +37,10 @@ export const verifyAdmin=async(res, req, next)=>{
         req.user = user;
         next();
     } catch (error) {
-        res.status(500).json({ success: false, message: error?.message || "Internal server error" })
+        return res.status(500).json({ success: false, message: error?.message || "Internal server error" })
     }
 }
-export const verifyUser=async(res, req, next)=>{
+export const verifyUser=async(req, res, next)=>{
     try {
         const token=req.cookies?.userToken;
 
@@ -55,6 +55,6 @@ export const verifyUser=async(res, req, next)=>{
         req.user = user;
         next();
     } catch (error) {
-        res.status(500).json({ success: false, message: error?.message || "Internal server error" })
+        return res.status(500).json({ success: false, message: error?.message || "Internal server error" })
     }
 }
