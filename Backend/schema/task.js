@@ -1,4 +1,5 @@
 import {z} from "zod";
+import mongoose from "mongoose";
 
 export const taskZodSchema = z.object({
     taskTitle: z.string().min(1, { message: "Task title is required" }).max(255, { message: "Task title cannot exceed 255 characters" }),

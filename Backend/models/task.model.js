@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { taskZodSchema } from "../schema/task.js";
 
 
 const taskSechema= new mongoose.Schema({
@@ -13,6 +14,7 @@ const taskSechema= new mongoose.Schema({
     },
 
     taskStatus:{
+        type: String,
         required: true
     },
 
@@ -35,10 +37,11 @@ const taskSechema= new mongoose.Schema({
         ref: "Project"
     },
 
-    assignedUsers:{
+    assignedUsers:[{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
-    },
+        ref: "User",
+        required: true
+    }],
     createdBy:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
@@ -46,4 +49,22 @@ const taskSechema= new mongoose.Schema({
     
 })
 
+
+taskSechema.pre("validate", function(next){
+    try{
+        
+        const validatedData = taskZodSchema.parse({
+            ...this.toObject(),
+            projectId: this.projectId.toString(),
+            createdBy: this.createdBy.toString(),
+            assignedUsers: this.assignedUsers.map(u => u?._id.toString()) 
+        });
+        Object.assign(this, validatedData);
+        next();
+    }
+    catch(error){
+        console.log(error)
+        next(new Error(error.errors.map(e=>e.message).join(",")))
+    }
+})
 export const Task=mongoose.model("Task", taskSechema);
