@@ -86,6 +86,22 @@ export const getProjectByid= async(req, res)=>{
 }
 
 
+export const updateProject= async(req, res)=>{
+    try {
+        const projectId=req.params.id;
+        const updateProject = await Project.findByIdAndUpdate(projectId, req.body, { new: true, runValidators: true, context: 'query'});
+
+        if(!updateProject){
+            return res.status(404).json({success: false, message: "Project not found"});
+        }
+
+        res.status(200).json({success: true, message: "Project updated successfully"})
+    } catch (error) {
+        res.status(500).json({success: false, message: "Internal server error"})
+    }
+}
+
+
 export const deleteProject= async(req, res)=>{
     try {
             const projectId = req.params.id;
@@ -100,3 +116,6 @@ export const deleteProject= async(req, res)=>{
             return res.status(500).json({ success: false, message: "Internal server error" , error:error.message});
         }
 }
+
+
+ 

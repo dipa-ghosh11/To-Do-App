@@ -148,6 +148,23 @@ export const getUser=async(req, res)=>{
 }
 
 
+export const updateUser= async(req, res)=>{
+    try {    
+        const userId=req.params.id;
+        const updateUser = await User.findByIdAndUpdate(userId, req.body, { new: true, runValidators: true, context: 'query'});
+
+        if(!updateUser){
+            return res.status(404).json({success: false, message: "User not found"});
+        }
+
+        res.status(200).json({success: true, message: "User updated successfully"})
+    } catch (error) {
+        res.status(500).json({success: false, message: "Internal server error", error: error.message})  
+
+    }
+}
+
+
 export const deleteUser = async (req, res) => {
     try {
         const userId = req.params.id;
