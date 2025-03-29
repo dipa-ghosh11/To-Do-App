@@ -15,14 +15,14 @@ const HomePage = () => {
                         className="mr-4 px-4 py-2 border border-blue-400 text-blue-400 rounded-lg hover:bg-blue-400 hover:text-gray-900 transition"
                         onClick={() => { setShowAuth(true); setIsLogin(true); }}
                     >
-                        Login
+                        Sign Up/Log In 
                     </button>
-                    <button
+                    {/* <button
                         className="px-4 py-2 bg-blue-400 text-gray-900 rounded-lg hover:bg-blue-500 transition"
                         onClick={() => { setShowAuth(true); setIsLogin(false); }}
                     >
                         Sign Up
-                    </button>
+                    </button> */}
                 </div>
             </nav>
 
@@ -54,7 +54,7 @@ const HomePage = () => {
                     </section>
                 </>
             ) : (
-                <AuthPage isLogin={isLogin} setShowAuth={setShowAuth} />
+                <AuthPage />
             )}
         </div>
     );
