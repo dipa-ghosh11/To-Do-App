@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import AuthPage from "./AuthPage";
+import { Link } from "react-router-dom";
 
 const HomePage = () => {
-    const [showAuth, setShowAuth] = useState(false);
-    const [isLogin, setIsLogin] = useState(true);
 
     return (
         <div className="min-h-screen bg-gray-900 text-white">
@@ -11,24 +10,21 @@ const HomePage = () => {
             <nav className="bg-gray-800 shadow-md p-4 flex justify-between items-center rounded-b-lg">
                 <h1 className="text-2xl font-bold text-blue-400">TaskFlow</h1>
                 <div>
+                    <Link to="/auth">
                     <button
                         className="mr-4 px-4 py-2 border border-blue-400 text-blue-400 rounded-lg hover:bg-blue-400 hover:text-gray-900 transition"
                         onClick={() => { setShowAuth(true); setIsLogin(true); }}
                     >
                         Sign Up/Log In 
                     </button>
-                    {/* <button
-                        className="px-4 py-2 bg-blue-400 text-gray-900 rounded-lg hover:bg-blue-500 transition"
-                        onClick={() => { setShowAuth(true); setIsLogin(false); }}
-                    >
-                        Sign Up
-                    </button> */}
+                    </Link>
+                    
                 </div>
             </nav>
 
-            {/* Hero Section */}
-            {!showAuth ? (
-                <>
+            
+            
+                
                     <header className="text-center py-20 px-6">
                         <h2 className="text-5xl font-extrabold">Stay Organized, Stay Productive</h2>
                         <p className="text-lg mt-4 text-gray-400">Manage your tasks efficiently with TaskFlow</p>
@@ -52,10 +48,9 @@ const HomePage = () => {
                             <p className="text-gray-400 mt-2">Access your to-do list from anywhere.</p>
                         </div>
                     </section>
-                </>
-            ) : (
-                <AuthPage />
-            )}
+                         
+                
+            
         </div>
     );
 };
