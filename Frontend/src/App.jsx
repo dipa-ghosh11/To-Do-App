@@ -1,4 +1,5 @@
 import './App.css'
+import AuthPage from './pages/AuthPage.jsx'
 import HomePage from './pages/HomePage.jsx'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
@@ -10,6 +11,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<HomePage />}/>
+          
         </Routes>
       </Router>
     </>
