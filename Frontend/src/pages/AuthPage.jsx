@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import LogIn from "../components/LogIn.jsx";
 import SignUp from "../components/SignUp.jsx";
-import { Link } from "react-router-dom";
 import NavBar from "../components/NavBar.jsx";
 
 const AuthPage = () => {
