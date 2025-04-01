@@ -1,8 +1,12 @@
 import React from 'react'
+import Navbar from '../components/NavBar'
 
 const UserPage = () => {
   return (
-    <div>UserPage</div>
+    <div>
+      <Navbar name="Logout" path="/auth" logout={true} />
+      UserPage
+    </div>
   )
 }
 
