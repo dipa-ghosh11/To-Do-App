@@ -38,7 +38,14 @@ const SignUp = ({ setIsLogin }) => {
                     setUser(res.data.data);
                     setAuthenticated(true);
                 toast.success("User signed up")
-                navigate("/user");
+
+                if (role == "user") {
+                    navigate("/user")
+                }
+                else {
+                    navigate("/admin")
+                }
+                
             } catch (error) {
                 toast.error(error.response.data.message, error.response.data.error ? ": "+ error.response.data.error:+"")
             }

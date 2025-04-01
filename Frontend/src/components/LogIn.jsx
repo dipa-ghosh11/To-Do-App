@@ -33,7 +33,14 @@ const LogIn = ({ setIsLogin }) => {
                 setUser(res.data.data);
                 setAuthenticated(true);
             toast.success("User logged in")
+
+            if(role=="user"){
             navigate("/user")
+            }
+            else{
+                navigate("/admin")
+            }
+            
         } catch (error) {
             toast.error(error.response.data.message)
         }

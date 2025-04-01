@@ -1,8 +1,11 @@
 import React from 'react'
+import Navbar from '../components/NavBar.jsx'
 
 const AdminDashboard = () => {
   return (
-    <div>AdminDashboard</div>
+    <>
+          <Navbar name="Logout" path="/auth" logout={true} />
+    </>
   )
 }
 
