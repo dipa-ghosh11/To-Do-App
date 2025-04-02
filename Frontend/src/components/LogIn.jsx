@@ -34,13 +34,7 @@ const LogIn = ({ setIsLogin }) => {
                 setAuthenticated(true);
             toast.success("User logged in")
 
-            if(role=="user"){
-            navigate("/user")
-            }
-            else{
-                navigate("/admin")
-            }
-            
+           role=="user" ? navigate("/user") : navigate("/admin");
         } catch (error) {
             toast.error(error.response.data.message)
         }
