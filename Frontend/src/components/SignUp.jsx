@@ -4,20 +4,27 @@ import { AuthContext } from '../contexts/AuthContext';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import LogIn from './LogIn';
 
 const SignUp = ({ setIsLogin }) => {
     const {
-            email,
-            role,
-            password,
-            setEmail,
-            setRole,
-            setPassword,
-            authenticated,
-            user,
-            setAuthenticated,
+            
             setUser
     } = useContext(AuthContext);
+
+    const [formData, setFormData] = useState({
+            fullName: "",
+            email: "",
+            password: "",
+            role: ""
+    });
+    
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
+    };
 
     const navigate = useNavigate();    
     const [name, setName] = useState("");
@@ -25,28 +32,22 @@ const SignUp = ({ setIsLogin }) => {
     
         const handleSignup = async (e) => {
             e.preventDefault();
+            // console.log({...formData, isActive})
             try {
                 const res = await axios
                     .post("http://localhost:4000/api/user/register", {
-                        fullName:name,
-                        email,
-                        role,
-                        password,
-                        isActive
-                    });
+                        ...formData,
+                        isActive: isActive
+                    }, {withCredentials:true});
     
-                    setUser(res.data.data);
-                    setAuthenticated(true);
+                setUser(res.data.data);
+                localStorage.setItem("user", JSON.stringify({...formData,isActive}));
+                const from = location.state?.from?.pathname || (formData.role === "admin" ? "/admin" : "/user");
+                navigate(from, { replace: true });
                 toast.success("User signed up")
-
-                if (role == "user") {
-                    navigate("/user")
-                }
-                else {
-                    navigate("/admin")
-                }
-                
+                navigate("/user");
             } catch (error) {
+                console.log(error)
                 toast.error(error.response.data.message, error.response.data.error ? ": "+ error.response.data.error:+"")
             }
         };
@@ -58,24 +59,30 @@ const SignUp = ({ setIsLogin }) => {
                     <input
                         type="text"
                         placeholder="Full Name"
-                        onChange={e=>setName(e.target.value)}
+                        name='fullName'
+                        value={formData.fullName}
+                        onChange={handleChange}
                         className="p-3 rounded mb-3 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                     <input
                         type="email"
+                        name='email'
+                        value={formData.email}
                         placeholder="Email"
-                        onChange={e=>setEmail(e.target.value)}
+                        onChange={handleChange}
                         className="p-3 rounded mb-3 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                     <input
                         type="password"
+                        name='password'
+                        value={formData.password}
                         placeholder="Password"
-                        onChange={e=>setPassword(e.target.value)}
+                        onChange={handleChange}
                         className="p-3 rounded mb-3 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                     <div className="mb-3">
                         <label className="text-gray-400 block mb-1">Select Role</label>
-                        <select className="p-3 w-full rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-500" onChange={e => setRole(e.target.value)}>
+                        <select name='role' value={formData.role} className="p-3 w-full rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-500" onChange={handleChange}>
                             <option value="" hidden>role</option>
                             <option value="user">User</option>
                             <option value="admin">Admin</option>

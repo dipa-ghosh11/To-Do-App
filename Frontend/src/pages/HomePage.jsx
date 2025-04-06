@@ -10,12 +10,12 @@ const HomePage = () => {
 
             <header className="text-center py-30 px-6">
                 <h2 className="text-5xl font-extrabold">Stay Organized, Stay Productive</h2>
-                <p className="text-lg mt-4 text-gray-400">Perfect sync between tasks & projects</p>
-                <button className="mt-6 px-6 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition shadow-lg">
-                    Explore Features
+                <p className="text-lg mt-4 text-gray-400">Manage your tasks efficiently with TaskFlow</p>
+                <button className="mt-6 px-6 py-3 bg-purple-500 text-white font-semibold rounded-lg hover:bg-purple-600 transition shadow-lg">
+                    Get Started
                 </button>
             </header>
-
+           
             <section className="max-w-4xl mx-auto py-12 px-6 grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-center">
                     <h3 className="text-xl font-bold text-blue-400">Easy Task Management</h3>

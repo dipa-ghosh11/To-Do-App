@@ -27,7 +27,7 @@ projectSchema.pre("validate", function(next){
         const validatedData = projectZodSchema.parse({
             ...this.toObject(),
             createdBy: this.createdBy.toString(),
-            assignedUsers: this.assignedUsers.map(u => u?._id.toString()) 
+            assignedUsers: this.assignedUsers.map(u => u?._id.toString()) // Fix here
         });
         Object.assign(this, validatedData);
         next();

@@ -1,16 +1,17 @@
 import express from "express"
-import { createUser, deleteUser, getAllUsers, getUser, loginUser, logoutUser, updateUser } from "../controllers/user.controller.js";
-import { verifyAuth } from "../middlewares/auth.middleware.js";
+import { createUser, deleteUser, getAllUsers, getUser, loginUser, logoutUser, updateUser, verify } from "../controllers/user.controller.js";
+import { verifyAdmin, verifyAuth, verifyUser } from "../middlewares/auth.middleware.js";
 
 const router=express.Router();
 
 router.post('/register', createUser)
 router.post('/login', loginUser)
 router.post('/logout', verifyAuth, logoutUser)
-router.get('/getusers', getAllUsers)
-router.get('/getuser/:id', getUser)
-router.put('/updateuser/:id', updateUser)
-router.delete('/delete/:id', deleteUser);
+router.get('/getusers', verifyAdmin, getAllUsers)
+router.get('/getuser/:id', verifyAdmin, getUser)
+router.put('/updateuser/:id', verifyAdmin, updateUser)
+router.delete('/delete/:id', verifyAdmin, deleteUser)
+router.get("/verify", verify);
 
 
 

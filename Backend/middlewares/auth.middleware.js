@@ -4,12 +4,12 @@ import { verifyToken } from "../utils/token.js";
 
 export const verifyAuth= async(req, res, next)=>{
     try {
-        const token=req.cookies?.adminToken || req.cookies?.userToken;
+        const token=req.cookies.adminToken || req.cookies.userToken;
 
         if (!token) return res.status(401).json({ success: false, message: "Unauthorized request" })
-        console.log(token)
+        // console.log(token)
         const decodeToken=verifyToken(token);
-        console.log(decodeToken)
+        // console.log(decodeToken)
         
         const user=await User.findById(decodeToken._id).select("-password");
 

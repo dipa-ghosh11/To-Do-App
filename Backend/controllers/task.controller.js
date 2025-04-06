@@ -35,7 +35,9 @@ export const createTask = async (req, res) => {
 
 export const getAllTask = async (req, res) => {
     try {
-        const tasks = await Task.find();
+        const tasks = await Task.find()
+            .populate('assignedUsers', 'fullName email')
+            .populate('projectId', 'projectTitle');
 
         if (!tasks || tasks.length === 0) {
             return res.status(404).json({
@@ -45,10 +47,10 @@ export const getAllTask = async (req, res) => {
         }
 
         return res.status(200).json({
-            succes: true,
+            success: true,
             message: "Tasks fetched successfully",
             tasks
-        })
+        });
 
     } catch (error) {
         res.status(500).json({ success: false, message: "Internal server error", error: error.message })
@@ -76,7 +78,15 @@ export const getTaskById = async (req, res) => {
 export const updateTask = async (req, res) => {
     try {
         const taskId = req.params.id;
-        const updateTask = await Task.findByIdAndUpdate(taskId, req.body, { new: true, runValidators: true, context: 'query' });
+        const updateTask = await Task.findByIdAndUpdate(
+            taskId, 
+            req.body, 
+            { 
+                new: true, 
+                runValidators: true, 
+                context: 'query' 
+            }
+        ).populate('assignedUsers', 'fullName email');
 
         if (!updateTask) {
             return res.status(404).json({ success: false, message: "Task not found" });
@@ -98,5 +108,18 @@ export const deleteTask = async (req, res) => {
         return res.status(200).json({ success: true, message: "Task deleted successfully" });
     } catch (error) {
         return res.status(500).json({ success: false, message: "Internal server error", error: error.message })
+    }
+}
+
+export const getTaskByUser = async (req, res) => {
+    try {
+        const projectId = req.params.id;
+        const userId = req.user._id;
+
+        const tasks = await Task.find({ $and: [{projectId: projectId}, {assignedUsers: userId}] }).select("-createdBy -assignedUsers");
+        if (!tasks) return res.status(404).json({ success: false, message: "Tasks not found" });
+        return res.status(200).json({ success: true, message: "tasks fetched successfully", tasks });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: "Internal server error", error: error.message });
     }
 }

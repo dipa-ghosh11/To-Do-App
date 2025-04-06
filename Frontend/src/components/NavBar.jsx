@@ -5,24 +5,25 @@ import { AuthContext } from '../contexts/AuthContext.jsx';
 import axios from 'axios';
 
 const Navbar = ({ name, path, logout }) => {
-    const { setAuthenticated, setUser } = useContext(AuthContext);
+    const { setUser } = useContext(AuthContext);
 
     const handleLogout = async () => {
-        localStorage.removeItem("authenticated");
-        localStorage.removeItem("user");
-        setAuthenticated(false);
-        setUser(null);
-        toast.success("User logged out")
+
         try {
-            await axios.post("http://localhost:4000/api/user/logout")
+            await axios.post("http://localhost:4000/api/user/logout", {}, { withCredentials: true })
+                .then(() => {
+                    localStorage.removeItem("user");
+                    setUser(null);
+                    toast.success("User logged out")
+                })
         } catch (error) {
             console.log(error.response.data)
         }
     };
 
     return (
-        <nav className="bg-gray-800 shadow-md p-4 w-full fixed top-0 left-0 flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-purple-400 ml-4">WorkSync</h1>
+        <nav className="bg-gray-800 shadow-md p-4 w-full top-0 left-0 flex justify-between items-center">
+            <h1 className="text-2xl font-bold text-purple-400 ml-4">TaskFlow</h1>
             <div className="mr-4">
                 <Link to={path}>
                     <button

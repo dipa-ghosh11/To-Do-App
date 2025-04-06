@@ -37,7 +37,7 @@ export const createProject= async(req, res)=>{
 
 
     } catch (error) {
-        
+        // console.log(error)
         return res.status(500).json({ success: false, message: "Error creating project", error: error.message })
     }
 }
@@ -117,5 +117,14 @@ export const deleteProject= async(req, res)=>{
         }
 }
 
-
- 
+export const projectsByUser = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const projects = await Project.find({ assignedUsers: userId });
+        if (!projects) return res.status(404).json({ success: false, message: "Projects not found" });
+        return res.status(200).json({ success: true, message: "Projects fetched", projects });
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ success: false, message: "Internal server error", error: error.message });
+    }
+}

@@ -1,42 +1,51 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { AuthContext } from '../contexts/AuthContext.jsx';
 import { toast } from 'react-toastify';
-import axios from 'axios'
-import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const LogIn = ({ setIsLogin }) => {
-    const {
-        email,
-        role,
-        password,
-        setEmail,
-        setRole,
-        setPassword,
-        authenticated,
-        user,
-        setAuthenticated,
-        setUser
-    } = useContext(AuthContext);
+    const { login } = useContext(AuthContext);
+    const [formData, setFormData] = useState({
+        email: "",
+        password: "",
+        role: ""
+    });
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const handleChange = (e) => {
+        setFormData({
+            ...formData, 
+            [e.target.name]: e.target.value
+        });
+    };
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        setLoading(true);
         try {
-            const res = await axios
-                .post("http://localhost:4000/api/user/login", {
-                    email,
-                    role,
-                    password,
-                });
+            const response = await axios.post(
+                "http://localhost:4000/api/user/login",
+                formData,
+                { withCredentials: true }
+            );
 
-            // console.log(res.data)
-                setUser(res.data.data);
-                setAuthenticated(true);
-            toast.success("User logged in")
+            if (response.data.success) {
+                // Store user data and token
+                await login(response.data.data);
+                toast.success(response.data.message);
 
-           role=="user" ? navigate("/user") : navigate("/admin");
+                // Navigate to the return URL if it exists, otherwise to the appropriate dashboard
+                const from = location.state?.from?.pathname || (formData.role === "admin" ? "/admin" : "/user");
+                navigate(from, { replace: true });
+            }
         } catch (error) {
-            toast.error(error.response.data.message)
+            toast.error(error.response?.data.message);
+            // console.error("Login error:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -47,24 +56,43 @@ const LogIn = ({ setIsLogin }) => {
                 <form className="flex flex-col" onSubmit={handleLogin}>
                     <input
                         type="email"
+                        name="email"
                         placeholder="Email"
-                        onChange={e=>setEmail(e.target.value)}
+                        value={formData.email}
+                        onChange={handleChange}
                         className="p-3 rounded mb-3 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        
                     />
                     <input
                         type="password"
+                        name="password"
                         placeholder="Password"
-                        onChange={e=>setPassword(e.target.value)}
+                        value={formData.password}
+                        onChange={handleChange}
                         className="p-3 rounded mb-3 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        
                     />
-                    <select className="p-3 rounded mb-4 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        onChange={e => setRole(e.target.value)}>
-                        <option value="" hidden>role</option>
+                    <select 
+                        name="role"
+                        value={formData.role}
+                        onChange={handleChange}
+                        className="p-3 rounded mb-4 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        
+                    >
+                        <option value="" hidden>Select Role</option>
                         <option value="user">User</option>
                         <option value="admin">Admin</option>
                     </select>
-                    <button className="bg-blue-500 p-3 rounded text-white hover:bg-blue-600 transition font-semibold">
-                        Login
+                    <button 
+                        type="submit"
+                        disabled={loading}
+                        className={`bg-blue-500 p-3 rounded text-white transition font-semibold ${
+                            loading 
+                                ? 'opacity-50 cursor-not-allowed' 
+                                : 'hover:bg-blue-600'
+                        }`}
+                    >
+                        {loading ? 'Logging in...' : 'Login'}
                     </button>
                     <p className="text-gray-400 mt-4 text-center">
                         Don't have an account?

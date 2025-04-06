@@ -2,13 +2,14 @@ import { User } from "../models/user.model.js";
 import bcrypt from "bcryptjs"
 import { generateToken } from "../utils/token.js";
 import mongoose from "mongoose";
+import jwt from "jsonwebtoken"
 
 export const createUser=async(req, res)=>{
     const {fullName, email, password , role, isActive}=req.body;
 
-    if(!fullName || !email|| !password || !role){
-        return res.status(400).json({success: false, message: "All fields are required"});
-    }
+    // if(!fullName || !email|| !password || !role){
+    //     return res.status(400).json({success: false, message: "All fields are required"});
+    // }
 
     const isRegistered= await User.findOne({email});
     if(isRegistered){
@@ -22,8 +23,9 @@ export const createUser=async(req, res)=>{
         const token=generateToken(user);
         
         //data-*/password
-        const data =await User.findById(user._id).select("-password");
-        res.cookie("token", token, {
+        const data = await User.findById(user._id).select("-password");
+        const cookieName = role === "admin" ? "adminToken" : "userToken";
+        res.cookie(cookieName, token, {
             httpOnly: true,
             secure: true,
            
@@ -40,46 +42,81 @@ export const createUser=async(req, res)=>{
 }
 
 
-export const loginUser= async (req, res)=>{
-    try{
-        const {email, password, role}=req.body;
-        if(!email || !password)
-        {
-            return res.status(400).json({success: false, message: "All fields are required"});
+export const loginUser = async (req, res) => {
+    try {
+        const { email, password, role } = req.body;
+
+        // Validate required fields
+        if (!email || !password || !role) {
+            return res.status(400).json({
+                success: false,
+                message: "Email, password, and role are required"
+            });
         }
 
+        // Find user by email
         const user = await User.findOne({ email });
-        if(!user)
-        {
-            return res.status(400).json({success: false, message: "Please entered a registered email"});
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid email or password"
+            });
         }
 
-        if (!(await bcrypt.compare(password, user.password))) {
-            return res.status(400).json({ success: false, message: "Please enter correct password" });
+        // Verify password
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid email or password"
+            });
         }
 
+        // Verify role
         if (role !== user.role) {
-            return res.status(400).json({ success: false, message: "User with this role is not found" });
+            return res.status(403).json({
+                success: false,
+                message: "Access denied. Invalid role for this user."
+            });
         }
 
-        
-       
-        const cookieName = user.role === "admin" ? "adminToken" : "userToken";
-        const data = await User.findById(user._id).select("-password");
+        // Check if user is active
+        if (!user.isActive) {
+            return res.status(403).json({
+                success: false,
+                message: "Your account has been deactivated. Please contact support."
+            });
+        }
+
+        // Generate token and get user data without password
         const token = generateToken(user);
+        const userData = await User.findById(user._id).select("-password");
+
+        // Set cookie based on role
+        const cookieName = role === "admin" ? "adminToken" : "userToken";
         res.cookie(cookieName, token, {
             httpOnly: true,
-            secure: true,
-           
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 24 * 60 * 60 * 1000 // 24 hours
         });
 
-        res.status(200).json({success: true, message: "User logged in", data, token});
-    }
+        // Send success response
+        return res.status(200).json({
+            success: true,
+            message: "Login successful",
+            data: userData
+        });
 
-    catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+    } catch (error) {
+        console.error("Login error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error",
+            error: error.message
+        });
     }
-}
+};
 
 
 export const logoutUser=async (req, res)=>{
@@ -180,3 +217,26 @@ export const deleteUser = async (req, res) => {
     }
 
 }
+
+export const verify = async (req, res) => {
+    try {
+        const token = req.cookies.adminToken || req.cookies.userToken; 
+
+        if (!token) {
+            return res.status(401).json({ success: false, message: "No token provided" });
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        const user = await User.findById(decoded._id).select("-password"); 
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        return res.status(200).json({ success: true, user });
+    } catch (error) {
+        console.error("Token verification error:", error);
+        return res.status(401).json({ success: false, message: "Invalid or expired token" });
+    }
+};
