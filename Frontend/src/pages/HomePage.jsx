@@ -10,9 +10,9 @@ const HomePage = () => {
 
             <header className="text-center py-30 px-6">
                 <h2 className="text-5xl font-extrabold">Stay Organized, Stay Productive</h2>
-                <p className="text-lg mt-4 text-gray-400">Manage your tasks efficiently with TaskFlow</p>
+                <p className="text-lg mt-4 text-gray-400">Manage your tasks efficiently with WorkSync</p>
                 <button className="mt-6 px-6 py-3 bg-purple-500 text-white font-semibold rounded-lg hover:bg-purple-600 transition shadow-lg">
-                    Get Started
+                    <a href="/auth">Get Started</a>
                 </button>
             </header>
            
