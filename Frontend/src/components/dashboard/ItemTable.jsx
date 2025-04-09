@@ -138,11 +138,10 @@ import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 import SearchFilterbar from '../SearchFilterbar';
 
 
-const ItemTable = ({ items, type, users, projects, onEdit, onDelete, tasks }) => {
+const ItemTable = ({ items, type, users, projects, onEdit, onDelete}) => {
   const getStatusStyle = (status) => {
     switch (status) {
       case 'Completed':
-      case 'Done':
         return {
           bg: 'bg-green-50',
           border: 'border-l-4 border-green-400',
@@ -187,32 +186,32 @@ const ItemTable = ({ items, type, users, projects, onEdit, onDelete, tasks }) =>
     );
   };
 
-  const[searchTerm, setSearchTerm]=useState("");
-  const [statusFilter, setStatusFilter] = useState('all');
+  // const[searchTerm, setSearchTerm]=useState("");
+  // const [statusFilter, setStatusFilter] = useState('all');
   
-      const handleSearch=(e)=>{
-          setSearchTerm(e.target.value.toLowerCase())
-      }
+  //     const handleSearch=(e)=>{
+  //         setSearchTerm(e.target.value.toLowerCase())
+  //     }
 
-    const handleStatusFilter = (e) => {
-      setStatusFilter(e.target.value);
-    };
+  //   const handleStatusFilter = (e) => {
+  //     setStatusFilter(e.target.value);
+  //   };
   
-      const filteredProjects=items.filter((project)=>{
-        // console.log(project)
-          return project.projectTitle.toLowerCase().includes(searchTerm)
+  //     const filteredProjects=items.filter((project)=>{
+  //       // console.log(project)
+  //         return project.projectTitle.toLowerCase().includes(searchTerm)
 
-      })
+  //     })
 
-    const filteredTasks = tasks.filter((task) => {
-      // console.log(task)
-      return task.taskTitle.toLowerCase().includes(searchTerm)
-    })
+  //   const filteredTasks = tasks.filter((task) => {
+  //     // console.log(task)
+  //     return task.taskTitle.toLowerCase().includes(searchTerm)
+    // })
 
   return (
     <div className="overflow-x-auto">
       {/* <SearchFilterbar {...true,  projects} /> */}
-      <input type="text" placeholder='Search by project name' onChange={handleSearch} />
+      {/* <input type="text" placeholder='Search by project name' onChange={handleSearch} /> */}
       <table className="min-w-full divide-y divide-gray-200 shadow-md rounded-xl overflow-hidden bg-white">
         <thead className="bg-gradient-to-r from-blue-100 to-blue-200 text-gray-800 text-sm font-semibold uppercase tracking-wider">
           <tr>
@@ -226,7 +225,7 @@ const ItemTable = ({ items, type, users, projects, onEdit, onDelete, tasks }) =>
         <tbody>
           
           {
-            filteredProjects.map((item) => {
+            items.map((item) => {
             const title = type === 'project' ? item.projectTitle : item.taskTitle;
             const desc = type === 'project' ? item.projectDescription : item.taskDescription;
             const status = type === 'project' ? item.projectStatus : item.taskStatus;

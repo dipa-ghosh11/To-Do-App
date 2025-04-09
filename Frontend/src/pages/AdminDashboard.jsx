@@ -34,7 +34,7 @@
 //   });
 
 //   const { user } = useContext(AuthContext);
-  
+
 //   useEffect(() => {
 //     fetchProjects();
 //     fetchTasks();
@@ -558,6 +558,56 @@ const AdminDashboard = () => {
     }
   };
 
+
+  const [projectSearchTerm, setProjectSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState('all');
+
+  const handleStatusFilter = (e) => {
+    setStatusFilter(e.target.value);
+  };
+  const filteredProjects = projects.filter((project) => {
+    
+    const matchProject = project.projectTitle.toLowerCase().includes(projectSearchTerm.toLowerCase());
+
+    const matchStatus =
+      statusFilter === 'all' ||
+      (statusFilter === 'Completed' && project.projectStatus === 'Completed') ||
+      (statusFilter === 'In Progress' && project.projectStatus === 'In Progress') ||
+      (statusFilter === 'Pending' && project.projectStatus === 'Pending')
+
+    return matchProject && matchStatus;
+  }
+  );
+
+
+  const [taskSearchTerm, settaskSearchTerm] = useState("");
+  const [statustaskFilter, settaskStatusFilter] = useState('all');
+
+  const handletaskStatusFilter = (e) => {
+    settaskStatusFilter(e.target.value);
+  };
+  const filteredTasks = tasks.filter((task) => {
+    // console.log(task)
+    const searchTerm = taskSearchTerm.toLowerCase();
+
+    const matchTaskTitle = task.taskTitle.toLowerCase().includes(searchTerm);
+
+    const matchAnyUser = task.assignedUsers?.some(user =>
+      user.fullName.toLowerCase().includes(searchTerm)
+    );
+
+    const matchTask = matchTaskTitle || matchAnyUser;
+
+    const matchtaskStatus =
+      statusFilter === 'all' ||
+      (statusFilter === 'Done' && task.taskStatus == 'Done') ||
+      (statusFilter === 'In Progress' && task.taskStatus == 'In Progress') ||
+      (statusFilter === 'To Do' && task.taskStatus == 'To Do')
+
+    return matchTask && matchtaskStatus;
+  }
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-100 via-yellow-100 to-teal-100 animate-fadeIn">
       <ToastContainer />
@@ -583,20 +633,120 @@ const AdminDashboard = () => {
         <DashboardTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
         <div className="bg-white shadow-xl rounded-3xl border border-pink-200 p-6 transition-all hover:shadow-2xl">
-          <div className="flex justify-between items-center mb-6">
+          {/* <div className="flex justify-between items-center mb-6">
             <h2 className="text-3xl font-bold text-gradient bg-gradient-to-r from-fuchsia-600 to-indigo-600 bg-clip-text text-transparent">
               {activeTab === "projects" ? "Projects" : activeTab === "tasks" ? "Tasks" : "Users"}
             </h2>
+            
+            {activeTab === "projects" && (
+              <input
+                type="text"
+                placeholder="Search by project..."
+                className="px-4 py-2 border rounded-md text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                value={projectSearchTerm}
+                onChange={(e) => setProjectSearchTerm(e.target.value)}
+              />
+            )}
+            {(activeTab ==='projects' || activeTab==='tasks') &&(
+            <select
+              value={statusFilter}
+              onChange={handleStatusFilter}
+              className="w-full md:w-auto px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400"
+            >
+              <option value="all">All</option>
+              <option value="Pending">Pending</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+            </select>)
+            }
             {activeTab !== "users" && (
               <button
                 onClick={() => handleOpenModal(activeTab.slice(0, -1))}
                 className="inline-flex items-center px-5 py-2 rounded-full shadow-lg text-sm font-bold text-white bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600"
+              >
+              
+                <FiPlus className="mr-2" />
+                Add {activeTab === "projects" ? "Project" : "Task"}
+              </button>
+            )}
+          </div> */}
+
+
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+            <h2 className="text-3xl font-bold text-gradient bg-gradient-to-r from-fuchsia-600 to-indigo-600 bg-clip-text text-transparent">
+              {activeTab === "projects" ? "Projects" : activeTab === "tasks" ? "Tasks" : "Users"}
+            </h2>
+
+            {activeTab === "projects" && (
+             
+              <div className="relative w-full sm:w-auto">
+                <span className="absolute inset-y-0 left-3 flex items-center text-gray-400 pointer-events-none">
+                  🔍
+                </span>
+                <input
+                  type="text"
+                  placeholder="Search by project..."
+                  className="pl-10 pr-4 py-2 w-full sm:w-auto rounded-full border border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white shadow-md transition duration-300 hover:shadow-lg"
+                  value={projectSearchTerm}
+                  onChange={(e) => setProjectSearchTerm(e.target.value)}
+                />
+              </div>
+            )}
+
+            {activeTab === "projects" && (
+              <select
+                value={statusFilter}
+                onChange={handleStatusFilter}
+                className="w-full sm:w-auto px-4 py-2 rounded-full border border-indigo-300 bg-white text-gray-700 shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-300 transition duration-300 hover:shadow-lg"
+              >
+                <option value="all">All</option>
+                <option value="Pending"> Pending</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+              </select>
+            )}
+
+            {activeTab === "tasks" && (
+
+              <div className="relative w-full sm:w-auto">
+                <span className="absolute inset-y-0 left-3 flex items-center text-gray-400 pointer-events-none">
+                  🔍
+                </span>
+                <input
+                  type="text"
+                  placeholder="Search by tasks..."
+                  className="pl-10 pr-4 py-2 w-full sm:w-auto rounded-full border border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white shadow-md transition duration-300 hover:shadow-lg"
+                  value={taskSearchTerm}
+                  onChange={(e) => settaskSearchTerm(e.target.value)}
+                />
+              </div>
+            )}
+
+            {activeTab === "tasks" && (
+              <select
+                value={statusFilter}
+                onChange={handleStatusFilter}
+                className="w-full sm:w-auto px-4 py-2 rounded-full border border-indigo-300 bg-white text-gray-700 shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-300 transition duration-300 hover:shadow-lg"
+              >
+                <option value="all">All</option>
+                <option value="To Do"> To Do</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Done">Done</option>
+              </select>
+            )}
+
+
+            {activeTab !== "users" && (
+              <button
+                onClick={() => handleOpenModal(activeTab.slice(0, -1))}
+                className="inline-flex items-center px-5 py-2 rounded-full shadow-lg text-sm font-bold text-white bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 transition duration-300"
               >
                 <FiPlus className="mr-2" />
                 Add {activeTab === "projects" ? "Project" : "Task"}
               </button>
             )}
           </div>
+
 
           <div className="overflow-x-auto">
             {activeTab === "users" ? (
@@ -606,7 +756,7 @@ const AdminDashboard = () => {
               />
             ) : (
               <ItemTable
-                items={activeTab === "projects" ? projects : tasks}
+                  items={activeTab === "projects" ? filteredProjects : filteredTasks}
                 type={activeTab.slice(0, -1)}
                 users={users}
                 projects={projects}
