@@ -610,6 +610,7 @@ const AdminDashboard = () => {
                 type={activeTab.slice(0, -1)}
                 users={users}
                 projects={projects}
+                tasks={tasks}
                 onEdit={(item) => handleOpenModal(activeTab.slice(0, -1), item)}
                 onDelete={(id) => handleDelete(id, activeTab.slice(0, -1))}
               />

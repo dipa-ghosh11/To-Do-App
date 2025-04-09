@@ -251,7 +251,7 @@ import { FiSearch } from 'react-icons/fi';
 
 const UserTable = ({ users, onToggleStatus }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all'); // 'all', 'active', 'inactive'
+  const [statusFilter, setStatusFilter] = useState('all');
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value.toLowerCase());
