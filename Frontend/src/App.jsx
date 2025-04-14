@@ -1,4 +1,3 @@
-import './App.css'
 import ProjectCard from './components/userboard/ProjectCard.jsx'
 import AuthPage from './pages/AuthPage.jsx'
 import HomePage from './pages/HomePage.jsx'
@@ -17,7 +16,7 @@ function App() {
       <Router>
         <ToastContainer />
         <Routes>
-          {/* Public routes */}
+          
           <Route path="/" element={<HomePage />} />
           <Route path="/auth" element={<AuthPage />} />
 
@@ -50,7 +49,7 @@ function App() {
             } 
           />
 
-          {/* Redirect unknown routes to home */}
+          
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>

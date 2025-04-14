@@ -5,10 +5,6 @@ export const createProject= async(req, res)=>{
     try {
         const { projectTitle, projectDescription, projectStatus, startDate, endDate, isDelete, assignedUsers}=req.body;
 
-        // if (!projectTitle || !projectDescription || !projectStatus || !startDate || !endDate || !assignedUsers || !createdBy){
-        //     return res.status(400).json({success: false, message: "All fiels are required"});
-        // }
-
         const userid=req.user._id.toString();
         // console.log(typeof userid)
 

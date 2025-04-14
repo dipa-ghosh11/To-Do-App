@@ -11,11 +11,7 @@ const UserPage = () => {
   const fetchProjects = async () => {
     try {
       const response = await axios.get(`http://localhost:4000/api/project/projectsByUser`, { withCredentials: true });
-      // if (response.data.projects) {
-      //   const filteredProjects = response.data.projects.filter(project => !project.isDelete);
-      //   console.log('Projects:', filteredProjects);
-      //   setProjects(filteredProjects);
-      // } 
+      
       console.log(response);
       setProjects(response.data.projects);
     } catch (error) {

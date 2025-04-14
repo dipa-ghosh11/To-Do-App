@@ -15,7 +15,7 @@ const FormModal = ({
 }) => {
   if (!isOpen) return null;
 
-  // Find the selected project's details
+  
   const currentProject = type === "task" && formData.projectId 
     ? projects.find(p => p._id === formData.projectId)
     : null;
@@ -111,7 +111,6 @@ const FormModal = ({
                       setFormData({ 
                         ...formData, 
                         projectId: e.target.value,
-                        // Keep existing assigned users if editing, otherwise reset
                         assignedUsers: editingItem ? formData.assignedUsers : users
                       });
                     }}

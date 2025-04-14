@@ -7,10 +7,6 @@ import jwt from "jsonwebtoken"
 export const createUser=async(req, res)=>{
     const {fullName, email, password , role, isActive}=req.body;
 
-    // if(!fullName || !email|| !password || !role){
-    //     return res.status(400).json({success: false, message: "All fields are required"});
-    // }
-
     const isRegistered= await User.findOne({email});
     if(isRegistered){
         return res.status(400).json({ success: false, message: "User already registered"});
@@ -46,7 +42,7 @@ export const loginUser = async (req, res) => {
     try {
         const { email, password, role } = req.body;
 
-        // Validate required fields
+        
         if (!email || !password || !role) {
             return res.status(400).json({
                 success: false,
@@ -54,7 +50,7 @@ export const loginUser = async (req, res) => {
             });
         }
 
-        // Find user by email
+        
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(401).json({
@@ -63,7 +59,7 @@ export const loginUser = async (req, res) => {
             });
         }
 
-        // Verify password
+        
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
             return res.status(401).json({
@@ -72,7 +68,7 @@ export const loginUser = async (req, res) => {
             });
         }
 
-        // Verify role
+        
         if (role !== user.role) {
             return res.status(403).json({
                 success: false,
@@ -80,7 +76,7 @@ export const loginUser = async (req, res) => {
             });
         }
 
-        // Check if user is active
+        
         if (!user.isActive) {
             return res.status(403).json({
                 success: false,
@@ -88,11 +84,11 @@ export const loginUser = async (req, res) => {
             });
         }
 
-        // Generate token and get user data without password
+        
         const token = generateToken(user);
         const userData = await User.findById(user._id).select("-password");
 
-        // Set cookie based on role
+        
         const cookieName = role === "admin" ? "adminToken" : "userToken";
         res.cookie(cookieName, token, {
             httpOnly: true,
@@ -101,7 +97,7 @@ export const loginUser = async (req, res) => {
             maxAge: 24 * 60 * 60 * 1000 // 24 hours
         });
 
-        // Send success response
+        
         return res.status(200).json({
             success: true,
             message: "Login successful",

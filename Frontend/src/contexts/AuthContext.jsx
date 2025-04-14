@@ -8,23 +8,23 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
 
-    // Check authentication status on mount and when user changes
+    
     useEffect(() => {
         const verifyAuth = async () => {
             try {
                 const storedUser = localStorage.getItem("user");
                 
                 if (storedUser) {
-                    // Verify token with backend
+                    
                     const response = await axios.get("http://localhost:4000/api/user/verify", {
                         withCredentials: true
                     });
 
                     if (response.data.success) {
-                        // If verification successful, update user state with stored user data
+                       
                         setUser(JSON.parse(storedUser));
                     } else {
-                        // If verification fails, clear storage and user state
+                        
                         localStorage.removeItem("user");
                         setUser(null);
                     }
@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (userData) => {
         try {
-            // Store user data in localStorage
+            
             localStorage.setItem("user", JSON.stringify(userData));
             setUser(userData);
         } catch (error) {

@@ -6,7 +6,7 @@ const PrivateRoute = ({ element, allowedRoles = [] }) => {
     const { user, loading } = useContext(AuthContext);
     const location = useLocation();
 
-    // Show loading state while checking authentication
+    
     if (loading) {
         return (
             <div className="flex justify-center items-center min-h-screen bg-gray-900">
@@ -15,17 +15,17 @@ const PrivateRoute = ({ element, allowedRoles = [] }) => {
         );
     }
 
-    // If not authenticated, redirect to login with return URL
+    
     if (!user) {
         return <Navigate to="/auth" state={{ from: location }} replace />;
     }
 
-    // If roles are specified and user's role is not in allowed roles, redirect to appropriate dashboard
+    
     if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
         return <Navigate to={user.role === "admin" ? "/admin" : "/user"} replace />;
     }
 
-    // If all checks pass, render the protected component
+   
     return element;
 };
 
